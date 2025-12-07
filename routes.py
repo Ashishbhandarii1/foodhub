@@ -2,6 +2,8 @@ from flask import render_template, request, redirect, url_for, session, flash, j
 from app import app, db
 from models import Category, MenuItem, Order, OrderItem
 import json
+# Force update
+from flask import render_template...
 
 # --- PUBLIC ROUTES (No Password Needed) ---
 
