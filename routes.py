@@ -2,16 +2,23 @@ from flask import render_template, request, redirect, url_for, session, flash, j
 from app import app, db
 from models import Category, MenuItem, Order, OrderItem
 import json
-# Force update
-from flask import render_template...
+from datetime import datetime, timedelta
 
-# --- PUBLIC ROUTES (No Password Needed) ---
+# --- PUBLIC ROUTES ---
 
 @app.route('/')
 def index():
     categories = Category.query.all()
     popular_items = MenuItem.query.filter_by(is_popular=True, is_available=True).limit(6).all()
     return render_template('index.html', categories=categories, popular_items=popular_items)
+
+
+# --- NEW ARG TECH PORTFOLIO ROUTE ---
+@app.route('/services')
+def services():
+    # We pass cart_items so the cart number in the navbar still works on this page
+    cart_items = get_cart_items()
+    return render_template('services.html', cart_items=cart_items)
 
 
 @app.route('/menu')
@@ -97,6 +104,9 @@ def checkout():
     total = subtotal + delivery_fee
     
     if request.method == 'POST':
+        # --- TIMEZONE FIX (Convert UTC to IST) ---
+        ist_now = datetime.utcnow() + timedelta(hours=5, minutes=30)
+        
         order = Order(
             customer_name=request.form['name'],
             customer_email=request.form['email'],
@@ -106,7 +116,8 @@ def checkout():
             subtotal=subtotal,
             delivery_fee=delivery_fee,
             total=total,
-            status='confirmed'
+            status='confirmed',
+            created_at=ist_now
         )
         db.session.add(order)
         db.session.flush()
@@ -153,14 +164,13 @@ def order_history():
     return render_template('order_history.html', orders=orders)
 
 
-# --- ADMIN SECURITY SECTION (New Login Logic) ---
+# --- ADMIN SECURITY SECTION ---
 
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
         password = request.form.get('password')
-        # --- PASSWORD SETTING ---
-        if password == "admin123":  # Change this to whatever you want
+        if password == "admin123":
             session['is_admin'] = True
             flash('Welcome back, Admin!', 'success')
             return redirect(url_for('admin'))
@@ -179,7 +189,6 @@ def admin_logout():
 
 @app.route('/admin')
 def admin():
-    # SECURITY CHECK: Kick user out if not logged in
     if not session.get('is_admin'):
         return redirect(url_for('admin_login'))
 
@@ -280,11 +289,10 @@ def cart_count():
     return {'cart_count': count}
 
 
-# --- SECRET ROUTE TO SEED DATABASE (NUCLEAR OPTION) ---
+# --- NUCLEAR SEED ROUTE ---
 @app.route('/seed-db')
 def run_seed_manually():
     try:
-        # STEP 1: Clear all existing data
         try:
             num_items = MenuItem.query.delete()
             num_cats = Category.query.delete()
@@ -292,16 +300,14 @@ def run_seed_manually():
         except:
             db.session.rollback()
 
-        # STEP 2: Create Categories
         cat_pizza = Category(name="Pizza", icon="fa-pizza-slice")
         cat_burger = Category(name="Burgers", icon="fa-burger")
         cat_asian = Category(name="Asian", icon="fa-bowl-rice")
         cat_dessert = Category(name="Desserts", icon="fa-ice-cream")
         
         db.session.add_all([cat_pizza, cat_burger, cat_asian, cat_dessert])
-        db.session.commit()  # Commit to get IDs
+        db.session.commit()
         
-        # STEP 3: Create Menu Items
         items = [
             MenuItem(
                 name="Margherita Pizza",

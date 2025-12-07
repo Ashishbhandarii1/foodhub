@@ -1,11 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ARG-FoodHub - Real food. Real fast. Really good{% endblock %}</title>
+    <title>{% block title %}TheFoodHub - Real food. Real fast. Really good{% endblock %}</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              orange: { 500: '#f97316', 600: '#ea580c' },
+            }
+          }
+        }
+      }
+    </script>
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 </head>
@@ -14,7 +28,7 @@
         <div class="nav-container">
             <a href="{{ url_for('index') }}" class="logo">
                 <i class="fas fa-utensils"></i>
-                <span>ARG-FoodHub</span>
+                <span>TheFoodHub</span>
             </a>
             
             <div class="nav-links">
@@ -79,7 +93,7 @@
             </div>
             <div class="footer-section">
                 <h4>Quick Links</h4>
-                <a href="#">About ARG-Brothers</a>
+                <a href="{{ url_for('index') }}">Home</a>
                 <a href="{{ url_for('menu') }}">Browse Menu</a>
                 <a href="{{ url_for('track_order') }}">Track Order</a>
                 <a href="{{ url_for('cart') }}">View Cart</a>
@@ -88,10 +102,16 @@
                 <h4>Contact</h4>
                 <p><i class="fas fa-phone"></i> +91 7060459014</p>
                 <p><i class="fas fa-envelope"></i> Ashishbhandari0408@gmail.com</p>
+                
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 ARG-FoodHub. All rights reserved.</p>
+            <p>&copy; 2026 TheFoodHub. All rights reserved.</p>
+           
+    <p class="text-sm">
+        Website developed by <a href="https://foodhub-gjzw.onrender.com/services" target="_blank" style="color: orange;">ARG Tech</a>
+    </p>
+
         </div>
     </footer>
 </body>
