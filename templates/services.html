@@ -22,7 +22,7 @@
     </div>
 
     <div class="relative max-w-7xl mx-auto px-4 py-24 md:py-32 flex flex-col md:flex-row items-center">
-        <div class="md:w-1/2 text-center md:text-left z-10">
+        <div class="md:w-1/2 text-center md:text-left z-10 order-2 md:order-1">
             <div class="inline-block px-4 py-1 mb-4 border border-orange-500 rounded-full bg-orange-500/10 text-orange-400 text-sm font-bold tracking-widest uppercase">
                 Founder & Developer
             </div>
@@ -43,14 +43,15 @@
             </div>
         </div>
 
-        <div class="md:w-1/2 mt-12 md:mt-0 relative z-10 flex justify-center">
+        <div class="md:w-1/2 mb-12 md:mb-0 relative z-10 flex justify-center order-1 md:order-2">
             <div class="relative w-64 h-64 md:w-96 md:h-96">
                 <div class="absolute inset-0 bg-gradient-to-r from-orange-500 to-purple-600 rounded-full blur-2xl opacity-30 animate-pulse"></div>
-                <div class="relative w-full h-full bg-gray-800 rounded-full border-4 border-gray-700 overflow-hidden shadow-2xl flex items-center justify-center">
-                    <i class="fas fa-user-astronaut text-8xl text-gray-600"></i>
-                    </div>
                 
-                <div class="absolute bottom-4 right-4 bg-white text-gray-900 px-4 py-2 rounded-lg shadow-xl font-bold flex items-center gap-2 animate-bounce">
+                <div class="relative w-full h-full bg-gray-800 rounded-full border-4 border-gray-700 overflow-hidden shadow-2xl flex items-center justify-center">
+                    <img src="{{ url_for('static', filename='images/founder.png') }}" alt="Ashish Singh Bhandari" class="w-full h-full object-cover">
+                </div>
+                
+                <div class="absolute bottom-4 right-0 md:right-4 bg-white text-gray-900 px-4 py-2 rounded-lg shadow-xl font-bold flex items-center gap-2 animate-bounce">
                     <span class="text-2xl">🚀</span>
                     <div>
                         <p class="text-xs text-gray-500 uppercase">Current Status</p>
@@ -137,7 +138,7 @@
         <h2 class="text-3xl font-bold mb-12 border-l-8 border-orange-500 pl-6">Featured Project</h2>
         
         <div class="bg-gray-900 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row border border-gray-800">
-            <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+            <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center order-2 md:order-1">
                 <div class="flex items-center gap-3 mb-4">
                     <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Live Demo</span>
                     <span class="text-gray-500 text-sm">2025</span>
@@ -157,7 +158,7 @@
                     </a>
                 </div>
             </div>
-            <div class="md:w-1/2 bg-gray-800 relative min-h-[300px]">
+            <div class="md:w-1/2 bg-gray-800 relative min-h-[300px] order-1 md:order-2">
                 <img src="https://images.unsplash.com/photo-1555992336-03a23c7b20ee?w=800&q=80" class="w-full h-full object-cover opacity-60 hover:opacity-100 transition duration-500" alt="FoodHub Preview">
                 <div class="absolute bottom-4 right-4 bg-black/80 backdrop-blur px-4 py-2 rounded text-sm font-mono">
                     > Project Status: <span class="text-green-400">Online</span>

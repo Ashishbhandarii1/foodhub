@@ -1,13 +1,4 @@
-
-html {
-    scroll-behavior: smooth;
-}
-
-.navbar {
-    z-index: 50; 
-    position: relative;
-}
-:root {
+z:root {
     --primary: #FF6B35;
     --primary-dark: #E55A2B;
     --secondary: #2D3436;
