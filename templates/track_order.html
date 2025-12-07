@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Track Order - FoodHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Track Your Order</h1>
+        <p>Enter your order details to check the status</p>
+    </div>
+</div>
+
+<section class="track-section">
+    <div class="container">
+        <div class="track-layout">
+            <div class="track-form-container">
+                <form action="{{ url_for('track_order') }}" method="POST" class="track-form">
+                    <div class="form-group">
+                        <label for="order_id">Order Number</label>
+                        <input type="number" id="order_id" name="order_id" required placeholder="Enter your order number">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-search"></i> Track Order
+                    </button>
+                </form>
+            </div>
+
+            {% if order %}
+            <div class="order-tracking-result">
+                <div class="tracking-header">
+                    <h2>Order #{{ order.id }}</h2>
+                    <span class="status-badge status-{{ order.status }}">{{ order.status.replace('_', ' ').title() }}</span>
+                </div>
+
+                <div class="order-status-tracker horizontal">
+                    <div class="status-step {% if order.status in ['confirmed', 'preparing', 'out_for_delivery', 'delivered'] %}completed{% endif %}">
+                        <div class="step-icon"><i class="fas fa-check"></i></div>
+                        <span>Confirmed</span>
+                    </div>
+                    <div class="status-line {% if order.status in ['preparing', 'out_for_delivery', 'delivered'] %}active{% endif %}"></div>
+                    <div class="status-step {% if order.status in ['preparing', 'out_for_delivery', 'delivered'] %}completed{% endif %}">
+                        <div class="step-icon"><i class="fas fa-utensils"></i></div>
+                        <span>Preparing</span>
+                    </div>
+                    <div class="status-line {% if order.status in ['out_for_delivery', 'delivered'] %}active{% endif %}"></div>
+                    <div class="status-step {% if order.status in ['out_for_delivery', 'delivered'] %}completed{% endif %}">
+                        <div class="step-icon"><i class="fas fa-motorcycle"></i></div>
+                        <span>On the Way</span>
+                    </div>
+                    <div class="status-line {% if order.status == 'delivered' %}active{% endif %}"></div>
+                    <div class="status-step {% if order.status == 'delivered' %}completed{% endif %}">
+                        <div class="step-icon"><i class="fas fa-home"></i></div>
+                        <span>Delivered</span>
+                    </div>
+                </div>
+
+                <div class="tracking-details">
+                    <div class="detail-card">
+                        <h4><i class="fas fa-info-circle"></i> Order Info</h4>
+                        <p><strong>Ordered:</strong> {{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        <p><strong>Customer:</strong> {{ order.customer_name }}</p>
+                        <p><strong>Delivery Address:</strong> {{ order.delivery_address }}</p>
+                    </div>
+                    
+                    <div class="detail-card">
+                        <h4><i class="fas fa-shopping-bag"></i> Items</h4>
+                        {% for item in order.items %}
+                        <div class="tracking-item">
+                            <span>{{ item.quantity }}x {{ item.menu_item.name }}</span>
+                            <span>${{ "%.2f"|format(item.price * item.quantity) }}</span>
+                        </div>
+                        {% endfor %}
+                        <hr>
+                        <div class="tracking-total">
+                            <strong>Total:</strong>
+                            <strong>${{ "%.2f"|format(order.total) }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

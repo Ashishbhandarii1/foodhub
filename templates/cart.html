@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Cart - FoodHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Your Cart</h1>
+    </div>
+</div>
+
+<section class="cart-section">
+    <div class="container">
+        {% if cart_items %}
+        <div class="cart-layout">
+            <div class="cart-items">
+                {% for item in cart_items %}
+                <div class="cart-item">
+                    <div class="cart-item-image">
+                        {% if item.image_url %}
+                        <img src="{{ item.image_url }}" alt="{{ item.name }}">
+                        {% else %}
+                        <div class="placeholder-image-sm">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="cart-item-info">
+                        <h3>{{ item.name }}</h3>
+                        <span class="cart-item-price">${{ "%.2f"|format(item.price) }}</span>
+                    </div>
+                    <div class="cart-item-controls">
+                        <form action="{{ url_for('update_cart', item_id=item.id) }}" method="POST" class="quantity-form">
+                            <input type="hidden" name="action" value="decrease">
+                            <button type="submit" class="qty-btn">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </form>
+                        <span class="quantity">{{ item.quantity }}</span>
+                        <form action="{{ url_for('update_cart', item_id=item.id) }}" method="POST" class="quantity-form">
+                            <input type="hidden" name="action" value="increase">
+                            <button type="submit" class="qty-btn">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="cart-item-total">
+                        ${{ "%.2f"|format(item.price * item.quantity) }}
+                    </div>
+                    <form action="{{ url_for('update_cart', item_id=item.id) }}" method="POST">
+                        <input type="hidden" name="action" value="remove">
+                        <button type="submit" class="remove-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="cart-summary">
+                <h3>Order Summary</h3>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>${{ "%.2f"|format(subtotal) }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery Fee</span>
+                    <span>${{ "%.2f"|format(delivery_fee) }}</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>${{ "%.2f"|format(total) }}</span>
+                </div>
+                <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-block">
+                    Proceed to Checkout <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="{{ url_for('menu') }}" class="btn btn-secondary btn-block">
+                    Continue Shopping
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-shopping-cart"></i>
+            <h3>Your cart is empty</h3>
+            <p>Add some delicious items to your cart!</p>
+            <a href="{{ url_for('menu') }}" class="btn btn-primary">
+                Browse Menu <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

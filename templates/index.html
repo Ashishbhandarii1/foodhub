@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1>Hot, fresh, and ready to eat.</h1>
+        <p>Tasty food from the best restaurants.</p>
+        <a href="{{ url_for('menu') }}" class="btn btn-primary btn-lg">
+            Order Now <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+</section>
+
+<section class="categories-section">
+    <div class="container">
+        <h2 class="section-title">Browse Categories</h2>
+        <div class="categories-grid">
+            {% for category in categories %}
+            <a href="{{ url_for('menu', category=category.id) }}" class="category-card">
+                <div class="category-icon">
+                    <i class="fas {{ category.icon }}"></i>
+                </div>
+                <span>{{ category.name }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% if popular_items %}
+<section class="popular-section">
+    <div class="container">
+        <h2 class="section-title">Popular Dishes</h2>
+        <div class="food-grid">
+            {% for item in popular_items %}
+            <div class="food-card">
+                {% if item.is_popular %}
+                <span class="badge badge-popular">Popular</span>
+                {% endif %}
+                <div class="food-image">
+                    {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.name }}">
+                    {% else %}
+                    <div class="placeholder-image">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="food-info">
+                    <h3>{{ item.name }}</h3>
+                    <p class="food-description">{{ item.description[:80] }}{% if item.description|length > 80 %}...{% endif %}</p>
+                    <div class="food-footer">
+                        <span class="food-price">${{ "%.2f"|format(item.price) }}</span>
+                        <form action="{{ url_for('add_to_cart', item_id=item.id) }}" method="POST">
+                            <button type="submit" class="btn btn-add">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="section-cta">
+            <a href="{{ url_for('menu') }}" class="btn btn-secondary">
+                View Full Menu <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="features-section">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Fast Delivery</h3>
+                <p>Get your food delivered in 30 minutes or less</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h3>Fresh Ingredients</h3>
+                <p>Quality ingredients from trusted local suppliers</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <h3>Easy Tracking</h3>
+                <p>Track your order in real-time from kitchen to door</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

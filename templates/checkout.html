@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - FoodHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Checkout</h1>
+    </div>
+</div>
+
+<section class="checkout-section">
+    <div class="container">
+        <div class="checkout-layout">
+            <div class="checkout-form-container">
+                <form action="{{ url_for('checkout') }}" method="POST" class="checkout-form">
+                    <div class="form-section">
+                        <h3><i class="fas fa-user"></i> Contact Information</h3>
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required placeholder="John Doe">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" required placeholder="john@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input type="tel" id="phone" name="phone" required placeholder="(555) 123-4567">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-map-marker-alt"></i> Delivery Address</h3>
+                        <div class="form-group">
+                            <label for="address">Street Address</label>
+                            <textarea id="address" name="address" required rows="2" placeholder="123 Main St, Apt 4B"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="instructions">Delivery Instructions (Optional)</label>
+                            <textarea id="instructions" name="instructions" rows="2" placeholder="Ring the doorbell, leave at door, etc."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-credit-card"></i> Payment Method</h3>
+                        <div class="payment-options">
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="card" checked>
+                                <span class="payment-label">
+                                    <i class="fas fa-credit-card"></i>
+                                    Pay on Delivery (Card)
+                                </span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="cash">
+                                <span class="payment-label">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    Pay on Delivery (Cash)
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">
+                        <i class="fas fa-check"></i> Place Order - ${{ "%.2f"|format(total) }}
+                    </button>
+                </form>
+            </div>
+
+            <div class="order-summary-sidebar">
+                <h3>Order Summary</h3>
+                <div class="order-items">
+                    {% for item in cart_items %}
+                    <div class="order-item">
+                        <span class="item-qty">{{ item.quantity }}x</span>
+                        <span class="item-name">{{ item.name }}</span>
+                        <span class="item-price">${{ "%.2f"|format(item.price * item.quantity) }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="order-totals">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>${{ "%.2f"|format(subtotal) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery Fee</span>
+                        <span>${{ "%.2f"|format(delivery_fee) }}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span>${{ "%.2f"|format(total) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

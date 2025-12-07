@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Order History - FoodHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Order History</h1>
+        <p>View your recent orders</p>
+    </div>
+</div>
+
+<section class="history-section">
+    <div class="container">
+        {% if orders %}
+        <div class="orders-list">
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-info">
+                        <h3>Order #{{ order.id }}</h3>
+                        <span class="order-date">{{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</span>
+                    </div>
+                    <span class="status-badge status-{{ order.status }}">
+                        {{ order.status.replace('_', ' ').title() }}
+                    </span>
+                </div>
+                <div class="order-body">
+                    <div class="order-items">
+                        {% for item in order.items %}
+                        <span class="order-item-tag">{{ item.quantity }}x {{ item.menu_item.name }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="order-delivery">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ order.delivery_address[:50] }}{% if order.delivery_address|length > 50 %}...{% endif %}
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <span class="order-total">${{ "%.2f"|format(order.total) }}</span>
+                    <a href="{{ url_for('track_order') }}" class="btn btn-sm btn-secondary">Track Order</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-history"></i>
+            <h3>No orders yet</h3>
+            <p>Start ordering delicious food!</p>
+            <a href="{{ url_for('menu') }}" class="btn btn-primary">Browse Menu</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

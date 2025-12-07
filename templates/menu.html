@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Menu - FoodHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Our Menu</h1>
+        <p>Choose from our delicious selection of meals</p>
+    </div>
+</div>
+
+<section class="menu-section">
+    <div class="container">
+        <div class="menu-layout">
+            <aside class="menu-sidebar">
+                <h3>Categories</h3>
+                <ul class="category-list">
+                    <li>
+                        <a href="{{ url_for('menu') }}" class="{% if not current_category %}active{% endif %}">
+                            <i class="fas fa-th-large"></i> All Items
+                        </a>
+                    </li>
+                    {% for category in categories %}
+                    <li>
+                        <a href="{{ url_for('menu', category=category.id) }}" 
+                           class="{% if current_category and current_category.id == category.id %}active{% endif %}">
+                            <i class="fas {{ category.icon }}"></i> {{ category.name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </aside>
+
+            <div class="menu-content">
+                {% if current_category %}
+                <h2 class="category-title">
+                    <i class="fas {{ current_category.icon }}"></i> {{ current_category.name }}
+                </h2>
+                {% endif %}
+
+                {% if items %}
+                <div class="food-grid">
+                    {% for item in items %}
+                    <div class="food-card">
+                        {% if item.is_popular %}
+                        <span class="badge badge-popular">Popular</span>
+                        {% endif %}
+                        <div class="food-image">
+                            {% if item.image_url %}
+                            <img src="{{ item.image_url }}" alt="{{ item.name }}" loading="lazy">
+                            {% else %}
+                            <div class="placeholder-image">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="food-info">
+                            <h3>{{ item.name }}</h3>
+                            <p class="food-description">{{ item.description[:100] }}{% if item.description|length > 100 %}...{% endif %}</p>
+                            <div class="food-footer">
+                                <span class="food-price">${{ "%.2f"|format(item.price) }}</span>
+                                <form action="{{ url_for('add_to_cart', item_id=item.id) }}" method="POST">
+                                    <button type="submit" class="btn btn-add">
+                                        <i class="fas fa-plus"></i> Add
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-utensils"></i>
+                    <h3>No items available</h3>
+                    <p>Check back later for more delicious options!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
