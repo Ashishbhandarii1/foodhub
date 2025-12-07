@@ -16,7 +16,7 @@ def send_async_email(app, msg):
 
 def send_email_notification(to_email, subject, body):
     # This checks if email is configured before trying to send
-    if app.config['MAIL_USERNAME']:
+    if app.config.get('MAIL_USERNAME'):
         msg = Message(subject, recipients=[to_email])
         msg.body = body
         # Send in a separate thread so the website doesn't freeze
@@ -288,3 +288,22 @@ def cart_count():
 @app.route('/seed-db')
 def run_seed_manually():
     return "Use the nuclear option code from previous step if needed."
+
+# --- DEBUG EMAIL ROUTE ---
+@app.route('/debug-email')
+def debug_email():
+    # 1. Check if variables exist
+    user = app.config.get('MAIL_USERNAME')
+    pwd = app.config.get('MAIL_PASSWORD')
+    
+    if not user or not pwd:
+        return f"❌ ERROR: Variables missing.<br>MAIL_USERNAME: {user}<br>MAIL_PASSWORD: {'Set' if pwd else 'Missing'}"
+
+    # 2. Try to send a real email
+    try:
+        msg = Message("Test Email from FoodHub", recipients=[user])
+        msg.body = "If you are reading this, your email configuration is PERFECT! 🚀"
+        mail.send(msg)
+        return f"✅ SUCCESS! Email sent to {user}. Check your inbox (and spam folder)."
+    except Exception as e:
+        return f"❌ FAILED with Error: {str(e)}"
