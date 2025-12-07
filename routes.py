@@ -2,7 +2,8 @@ from flask import render_template, request, redirect, url_for, session, flash, j
 from app import app, db
 from models import Category, MenuItem, Order, OrderItem
 import json
-
+# Import the seed function so we can use it in the secret route
+from seed_data import seed_database
 
 @app.route('/')
 def index():
@@ -237,3 +238,13 @@ def cart_count():
     cart = session.get('cart', {})
     count = sum(item['quantity'] for item in cart.values())
     return {'cart_count': count}
+
+
+# --- SECRET ROUTE TO SEED DATABASE ---
+@app.route('/seed-db')
+def run_seed_manually():
+    try:
+        seed_database()
+        return "✅ Success! Database seeded with food items. <a href='/'>Go to Home</a>"
+    except Exception as e:
+        return f"❌ Error: {str(e)}"
