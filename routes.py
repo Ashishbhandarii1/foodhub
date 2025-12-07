@@ -3,6 +3,8 @@ from app import app, db
 from models import Category, MenuItem, Order, OrderItem
 import json
 
+# --- PUBLIC ROUTES (No Password Needed) ---
+
 @app.route('/')
 def index():
     categories = Category.query.all()
@@ -149,8 +151,36 @@ def order_history():
     return render_template('order_history.html', orders=orders)
 
 
+# --- ADMIN SECURITY SECTION (New Login Logic) ---
+
+@app.route('/admin-login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        password = request.form.get('password')
+        # --- PASSWORD SETTING ---
+        if password == "admin123":  # Change this to whatever you want
+            session['is_admin'] = True
+            flash('Welcome back, Admin!', 'success')
+            return redirect(url_for('admin'))
+        else:
+            flash('Incorrect Password.', 'error')
+    return render_template('login.html')
+
+@app.route('/admin-logout')
+def admin_logout():
+    session.pop('is_admin', None)
+    flash('Logged out successfully.', 'info')
+    return redirect(url_for('index'))
+
+
+# --- PROTECTED ADMIN ROUTES ---
+
 @app.route('/admin')
 def admin():
+    # SECURITY CHECK: Kick user out if not logged in
+    if not session.get('is_admin'):
+        return redirect(url_for('admin_login'))
+
     orders = Order.query.order_by(Order.created_at.desc()).all()
     items = MenuItem.query.all()
     categories = Category.query.all()
@@ -169,6 +199,8 @@ def admin():
 
 @app.route('/admin/order/<int:order_id>/update-status', methods=['POST'])
 def update_order_status(order_id):
+    if not session.get('is_admin'): return redirect(url_for('admin_login'))
+    
     order = Order.query.get_or_404(order_id)
     new_status = request.form.get('status')
     if new_status in ['pending', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled']:
@@ -180,6 +212,8 @@ def update_order_status(order_id):
 
 @app.route('/admin/menu/add', methods=['POST'])
 def add_menu_item():
+    if not session.get('is_admin'): return redirect(url_for('admin_login'))
+
     item = MenuItem(
         name=request.form['name'],
         description=request.form['description'],
@@ -197,6 +231,8 @@ def add_menu_item():
 
 @app.route('/admin/menu/<int:item_id>/delete', methods=['POST'])
 def delete_menu_item(item_id):
+    if not session.get('is_admin'): return redirect(url_for('admin_login'))
+
     item = MenuItem.query.get_or_404(item_id)
     db.session.delete(item)
     db.session.commit()
@@ -206,6 +242,8 @@ def delete_menu_item(item_id):
 
 @app.route('/admin/menu/<int:item_id>/toggle', methods=['POST'])
 def toggle_menu_item(item_id):
+    if not session.get('is_admin'): return redirect(url_for('admin_login'))
+
     item = MenuItem.query.get_or_404(item_id)
     item.is_available = not item.is_available
     db.session.commit()
@@ -216,6 +254,8 @@ def toggle_menu_item(item_id):
 
 @app.route('/admin/category/add', methods=['POST'])
 def add_category():
+    if not session.get('is_admin'): return redirect(url_for('admin_login'))
+
     category = Category(
         name=request.form['name'],
         icon=request.form.get('icon', 'fa-utensils')
@@ -243,7 +283,6 @@ def cart_count():
 def run_seed_manually():
     try:
         # STEP 1: Clear all existing data
-        # We delete items first to avoid foreign key errors
         try:
             num_items = MenuItem.query.delete()
             num_cats = Category.query.delete()
