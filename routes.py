@@ -2,8 +2,6 @@ from flask import render_template, request, redirect, url_for, session, flash, j
 from app import app, db
 from models import Category, MenuItem, Order, OrderItem
 import json
-# Import the seed function so we can use it in the secret route
-from seed_data import seed_database
 
 @app.route('/')
 def index():
@@ -240,11 +238,82 @@ def cart_count():
     return {'cart_count': count}
 
 
-# --- SECRET ROUTE TO SEED DATABASE ---
+# --- SECRET ROUTE TO SEED DATABASE (NUCLEAR OPTION) ---
 @app.route('/seed-db')
 def run_seed_manually():
     try:
-        seed_database()
-        return "✅ Success! Database seeded with food items. <a href='/'>Go to Home</a>"
+        # STEP 1: Clear all existing data
+        # We delete items first to avoid foreign key errors
+        try:
+            num_items = MenuItem.query.delete()
+            num_cats = Category.query.delete()
+            db.session.commit()
+        except:
+            db.session.rollback()
+
+        # STEP 2: Create Categories
+        cat_pizza = Category(name="Pizza", icon="fa-pizza-slice")
+        cat_burger = Category(name="Burgers", icon="fa-burger")
+        cat_asian = Category(name="Asian", icon="fa-bowl-rice")
+        cat_dessert = Category(name="Desserts", icon="fa-ice-cream")
+        
+        db.session.add_all([cat_pizza, cat_burger, cat_asian, cat_dessert])
+        db.session.commit()  # Commit to get IDs
+        
+        # STEP 3: Create Menu Items
+        items = [
+            MenuItem(
+                name="Margherita Pizza",
+                description="Classic Italian pizza with fresh mozzarella and basil",
+                price=14.99,
+                category_id=cat_pizza.id,
+                image_url="https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=600",
+                is_popular=True,
+                is_available=True
+            ),
+            MenuItem(
+                name="Pepperoni Feast",
+                description="Loaded with spicy pepperoni and extra cheese",
+                price=16.99,
+                category_id=cat_pizza.id,
+                image_url="https://images.unsplash.com/photo-1628840042765-356cda07504e?w=600",
+                is_popular=True,
+                is_available=True
+            ),
+            MenuItem(
+                name="Classic Cheeseburger",
+                description="Juicy beef patty with cheddar, lettuce, and tomato",
+                price=12.99,
+                category_id=cat_burger.id,
+                image_url="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600",
+                is_popular=True,
+                is_available=True
+            ),
+            MenuItem(
+                name="Pad Thai",
+                description="Stir-fried rice noodles with shrimp and peanuts",
+                price=13.99,
+                category_id=cat_asian.id,
+                image_url="https://images.unsplash.com/photo-1559314809-0d155014e29e?w=600",
+                is_popular=True,
+                is_available=True
+            ),
+            MenuItem(
+                name="Chocolate Lava Cake",
+                description="Warm cake with a molten chocolate center",
+                price=8.99,
+                category_id=cat_dessert.id,
+                image_url="https://images.unsplash.com/photo-1624353365286-3f8d62daad51?w=600",
+                is_popular=False,
+                is_available=True
+            )
+        ]
+        
+        db.session.add_all(items)
+        db.session.commit()
+        
+        return f"✅ SUCCESS! Deleted old data. Added 4 categories and {len(items)} food items. <a href='/'>Go Home</a>"
+        
     except Exception as e:
+        db.session.rollback()
         return f"❌ Error: {str(e)}"
