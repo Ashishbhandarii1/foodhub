@@ -1,7 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}TheFoodHub - Real food. Real fast. Really good{% endblock %}</title>
+    
+    <meta name="google-site-verification" content="Fd8WZgL5eX28QP4LUePzPBM2B_heLLKCHHD-V4gw4bY" />
+
+    <title>{% block title %}ARG-FoodHub - Real food. Real fast. Really good{% endblock %}</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     
@@ -28,19 +33,22 @@
         <div class="nav-container">
             <a href="{{ url_for('index') }}" class="logo">
                 <i class="fas fa-utensils"></i>
-                <span>TheFoodHub</span>
+                <span>ARG-FoodHub</span>
             </a>
             
             <div class="nav-links">
                 <a href="{{ url_for('index') }}">Home</a>
                 <a href="{{ url_for('menu') }}">Menu</a>
+                
+                <a href="{{ url_for('services') }}" style="color: #f97316; font-weight: bold;">ARG Tech</a>
+                
                 <a href="{{ url_for('track_order') }}">Track Order</a>
                 
                 {% if session.get('is_admin') %}
                     <a href="{{ url_for('admin') }}" style="color: #f97316; font-weight: bold;">Admin Panel</a>
                     <a href="{{ url_for('admin_logout') }}" style="color: #ef4444;">Logout</a>
                 {% endif %}
-                </div>
+            </div>
             
             <div class="nav-actions">
                 <a href="{{ url_for('cart') }}" class="cart-btn">
@@ -58,6 +66,9 @@
         <div class="mobile-menu" id="mobileMenu">
             <a href="{{ url_for('index') }}">Home</a>
             <a href="{{ url_for('menu') }}">Menu</a>
+            
+            <a href="{{ url_for('services') }}" style="color: #f97316; font-weight: bold;">ARG Tech</a>
+            
             <a href="{{ url_for('track_order') }}">Track Order</a>
             <a href="{{ url_for('cart') }}">Cart</a>
             
@@ -65,7 +76,7 @@
                 <a href="{{ url_for('admin') }}" style="color: #f97316;">Admin Dashboard</a>
                 <a href="{{ url_for('admin_logout') }}" style="color: #ef4444;">Logout</a>
             {% endif %}
-            </div>
+        </div>
     </nav>
     
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -93,7 +104,7 @@
             </div>
             <div class="footer-section">
                 <h4>Quick Links</h4>
-                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('services') }}">About ARG-Brothers</a>
                 <a href="{{ url_for('menu') }}">Browse Menu</a>
                 <a href="{{ url_for('track_order') }}">Track Order</a>
                 <a href="{{ url_for('cart') }}">View Cart</a>
@@ -102,16 +113,13 @@
                 <h4>Contact</h4>
                 <p><i class="fas fa-phone"></i> +91 7060459014</p>
                 <p><i class="fas fa-envelope"></i> Ashishbhandari0408@gmail.com</p>
-                
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 TheFoodHub. All rights reserved.</p>
-           
-    <p class="text-sm">
-        Website developed by <a href="https://foodhub-gjzw.onrender.com/services" target="_blank" style="color: orange;">ARG Tech</a>
-    </p>
-
+            <p>&copy; 2026 ARG-FoodHub. All rights reserved.</p>
+            <p class="text-sm mt-2">
+                Website developed by <a href="{{ url_for('services') }}" style="color: orange; font-weight: bold;">ARG Tech</a>
+            </p>
         </div>
     </footer>
 </body>
