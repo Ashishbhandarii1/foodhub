@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Order Status Update</title>
+</head>
+<body style="font-family:system-ui, -apple-system, 'Segoe UI', Roboto, Arial;">
+  <div style="max-width:700px;margin:auto;padding:24px;border:1px solid #eee;border-radius:6px;">
+    <h2>Feast-Fleet — Order Update</h2>
+    <p>Hello,</p>
+    <p>Your order <strong>#{{ order.id if order and order.id else '—' }}</strong> status is now: <strong>{{ action }}</strong></p>
+    {% if order and order.status %}
+      <p>Current status: <strong>{{ order.status }}</strong></p>
+    {% endif %}
+    <p>If you have any questions, reply to this email or contact support.</p>
+    <hr/>
+    <small style="color:#666">This message was sent by Feast-Fleet on behalf of the restaurant admin (ashishbhandari0408@gmail.com).</small>
+  </div>
+</body>
+</html>
