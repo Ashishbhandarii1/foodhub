@@ -3,93 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FoodHub - Dark Premium{% endblock %}</title>
     
-    <meta name="google-site-verification" content="Fd8WZgL5eX28QP4LUePzPBM2B_heLLKCHHD-V4gw4bY" />
-
-    <title>{% block title %}ARG-FoodHub - Real food. Real fast. Really good{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              orange: { 500: '#f97316', 600: '#ea580c' },
-            }
-          }
-        }
-      }
-    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 </head>
 <body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        <span>{{ message }}</span>
+                        <button onclick="this.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <nav class="navbar">
         <div class="nav-container">
             <a href="{{ url_for('index') }}" class="logo">
-                <i class="fas fa-utensils"></i>
-                <span>ARG-FoodHub</span>
+                <i class="fas fa-utensils"></i> FoodHub
             </a>
-            
+
             <div class="nav-links">
                 <a href="{{ url_for('index') }}">Home</a>
                 <a href="{{ url_for('menu') }}">Menu</a>
-            
-                
                 <a href="{{ url_for('track_order') }}">Track Order</a>
-                
-                {% if session.get('is_admin') %}
-                    <a href="{{ url_for('admin') }}" style="color: #f97316; font-weight: bold;">Admin Panel</a>
-                    <a href="{{ url_for('admin_logout') }}" style="color: #ef4444;">Logout</a>
-                {% endif %}
             </div>
-            
+
             <div class="nav-actions">
                 <a href="{{ url_for('cart') }}" class="cart-btn">
                     <i class="fas fa-shopping-cart"></i>
-                    {% if cart_count > 0 %}
-                    <span class="cart-badge">{{ cart_count }}</span>
+                    {% if cart_count and cart_count > 0 %}
+                        <span class="cart-badge">{{ cart_count }}</span>
                     {% endif %}
                 </a>
+
                 <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
                     <i class="fas fa-bars"></i>
                 </button>
+
+                {% if session.get('is_admin') %}
+                    <div style="display: flex; align-items: center; gap: 15px; margin-left: 10px; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 15px;">
+                        <a href="{{ url_for('admin') }}" style="color: var(--accent); font-weight: 600; font-size: 0.9rem;">Dashboard</a>
+                        <a href="{{ url_for('logout') }}" style="background: var(--danger); padding: 5px 12px; border-radius: 20px; color: white; font-size: 0.8rem; font-weight: 600;">Logout</a>
+                    </div>
+                {% endif %}
             </div>
         </div>
-        
+
         <div class="mobile-menu" id="mobileMenu">
             <a href="{{ url_for('index') }}">Home</a>
             <a href="{{ url_for('menu') }}">Menu</a>
-            
-            <a href="{{ url_for('services') }}" style="color: #f97316; font-weight: bold;">ARG Tech</a>
-            
             <a href="{{ url_for('track_order') }}">Track Order</a>
-            <a href="{{ url_for('cart') }}">Cart</a>
-            
             {% if session.get('is_admin') %}
-                <a href="{{ url_for('admin') }}" style="color: #f97316;">Admin Dashboard</a>
-                <a href="{{ url_for('admin_logout') }}" style="color: #ef4444;">Logout</a>
+                <a href="{{ url_for('admin') }}" style="color: var(--accent);">Admin Dashboard</a>
+                <a href="{{ url_for('logout') }}" style="color: var(--danger);">Logout</a>
             {% endif %}
         </div>
     </nav>
-    
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="flash-messages">
-        {% for category, message in messages %}
-        <div class="flash-message flash-{{ category }}">
-            {{ message }}
-            <button onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
 
     <main>
         {% block content %}{% endblock %}
@@ -98,28 +79,33 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-section">
-                <h3><i class="fas fa-utensils"></i> ARG-FoodHub</h3>
-                <p>Real food. Real fast. Really good.</p>
+                <h3><i class="fas fa-utensils"></i> FoodHub</h3>
+                <p>Premium food delivery service. Quality meals, delivered fast.</p>
             </div>
             <div class="footer-section">
                 <h4>Quick Links</h4>
-                <a href="{{ url_for('services') }}">About ARG-Brothers</a>
                 <a href="{{ url_for('menu') }}">Browse Menu</a>
                 <a href="{{ url_for('track_order') }}">Track Order</a>
-                <a href="{{ url_for('cart') }}">View Cart</a>
+                <a href="#">About Us</a>
             </div>
             <div class="footer-section">
                 <h4>Contact</h4>
-                <p><i class="fas fa-phone"></i> +91 7060459014</p>
-                <p><i class="fas fa-envelope"></i> Ashishbhandari0408@gmail.com</p>
+                <p><i class="fas fa-envelope"></i> support@foodhub.com</p>
+                <p><i class="fas fa-phone"></i> (555) 123-4567</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 ARG-FoodHub. All rights reserved.</p>
-            <p class="text-sm mt-2">
-                Website developed by <a href="{{ url_for('services') }}" style="color: orange; font-weight: bold;">ARG Tech</a>
-            </p>
+            <p>&copy; 2024 FoodHub. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+    </script>
+    
+    {% block scripts %}{% endblock %}
 </body>
 </html>
